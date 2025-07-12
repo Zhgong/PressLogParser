@@ -1,19 +1,20 @@
 # PressLogParser
 
-Ein einfaches Tool zur Analyse von Festo-Presse-Logdateien mit interaktiven Kurvendiagrammen.
+
+Ein einfaches Werkzeug zum Parsen von Festo-Pressen-Logdateien mit interaktiver Kurvendarstellung.
 
 ## Installation
 
-Das Projekt verwendet [Poetry](https://python-poetry.org/), um Abhängigkeiten zu verwalten:
+Das Projekt verwendet [Poetry](https://python-poetry.org/) zur Verwaltung der Abh\xE4ngigkeiten:
 
 ```bash
 pip install poetry
 poetry install
 ```
 
-## Ausführung
+## Ausf\xFChren
 
-Starte die Streamlit-Anwendung:
+Starte die Streamlit-App:
 
 ```bash
 poetry run streamlit run app.py
@@ -21,7 +22,7 @@ poetry run streamlit run app.py
 
 ## Tests
 
-Unit-Tests ausführen:
+F\xFChre Unit-Tests aus:
 
 ```bash
 poetry run pytest
@@ -30,14 +31,15 @@ poetry run pytest
 ## Projektstruktur
 
 ```
-app.py             # Streamlit-Anwendung
-src/               # Code zur Logauswertung und Visualisierung
-tests/             # Unit-Tests
+app.py             # Einstiegspunkt der Streamlit-Anwendung
+src/               # Code f\xFCr Log-Parsing und Visualisierung
+tests/             # Unittests
 pyproject.toml     # Poetry-Konfiguration
 ```
 
-## Funktionen
+## Funktionsübersicht
 
-- Parst Einträge im Abschnitt `[Recorded curves]`
-- Berechnet Abstände und Geschwindigkeitskurven
-- Interaktive Anzeige der Daten mit Plotly in Streamlit
+- Parst die Aufzeichnungen im Abschnitt `[Recorded curves]`
+- Berechnet und zeigt Abtastintervalle sowie Geschwindigkeitskurven an
+- Interaktive Datenanzeige in Streamlit mit Plotly
+
