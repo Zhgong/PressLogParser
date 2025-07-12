@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "press-log-parser"
+version = "0.1.0"
+description = "Log file parser with Streamlit interface for interactive curve diagrams"
+authors = ["Unknown <unknown@example.com>"]
+packages = [{ include = "src" }]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "*"
+matplotlib = "*"
+plotly = "*"
+pandas = "*"
+requests = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
