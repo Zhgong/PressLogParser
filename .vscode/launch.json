@@ -8,8 +8,11 @@
             "name": "Streamlit Debug",
             "type": "debugpy",
             "request": "launch",
-            "program": "C:/Users/gong/.virtualenvs/PressLogParser-IxxTcTrl/Scripts/streamlit.exe",
-            "args": ["run", "app.py"],
+            "module": "streamlit",
+            "args": [
+                "run",
+                "${file}"
+            ],
             "console": "integratedTerminal"
         }
     ]
