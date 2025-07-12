@@ -1,5 +1,6 @@
 # PressLogParser
 
+
 Ein einfaches Werkzeug zum Parsen von Festo-Pressen-Logdateien mit interaktiver Kurvendarstellung.
 
 ## Installation
@@ -36,8 +37,9 @@ tests/             # Unittests
 pyproject.toml     # Poetry-Konfiguration
 ```
 
-## Funktions\xFCbersicht
+## Funktionsübersicht
 
 - Parst die Aufzeichnungen im Abschnitt `[Recorded curves]`
 - Berechnet und zeigt Abtastintervalle sowie Geschwindigkeitskurven an
 - Interaktive Datenanzeige in Streamlit mit Plotly
+

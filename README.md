@@ -1,10 +1,12 @@
 # PressLogParser
 
+
 PressLogParser is a simple tool for parsing log files from Festo press machines. It offers an interactive Streamlit interface for exploring the curves contained in the log.
 
 ## Installation
 
 This project uses [Poetry](https://python-poetry.org/) to manage dependencies:
+
 
 ```bash
 pip install poetry
@@ -19,9 +21,11 @@ Launch the Streamlit app:
 poetry run streamlit run app.py
 ```
 
+
 ## Testing
 
 Run the unit tests:
+
 
 ```bash
 poetry run pytest
