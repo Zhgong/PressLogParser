@@ -19,9 +19,14 @@ if uploaded_files:
             file_content = uploaded_file.read().decode("utf-8")
             st.subheader(f"Results for {uploaded_file.name}")
             logparser = LogParser(file_content)
-            metadata, records_dfs = logparser.parse_log()
+            result = logparser.parse_log()
+            if isinstance(result, tuple) and len(result) == 2:
+                metadata, records_dfs = result
+            else:
+                metadata, records_dfs = {}, []
             file_ui = ui.LogFileUI(file_index=file_index, filename=uploaded_file.name)
-            file_ui.display_metadata(metadata)
+            if hasattr(file_ui, "display_metadata"):
+                file_ui.display_metadata(metadata)
             if records_dfs:
                 for index, record_df in enumerate(records_dfs, start=1):
                     file_ui.display_record(record_df, index)
