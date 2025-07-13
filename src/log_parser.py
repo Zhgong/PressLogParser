@@ -1,6 +1,9 @@
 import re
+import logging
 import pandas as pd
 from typing import List, Dict, Any
+
+logger = logging.getLogger(__name__)
 
 class LogParser:
     def __init__(self, file_content: str) -> None:
@@ -33,7 +36,7 @@ class LogParser:
                     time_ms = parse_time(time)  # Use the shared function to parse time
                     current_record["points"].append({"Point": point, "Position": position, "Force": force, "Time (ms)": time_ms})
                 else:
-                    print(f"❌ Invalid line: {line}")
+                    logger.warning("Invalid line skipped: %s", line)
 
         # Convert records into a list of dataframes
         record_dfs: List[pd.DataFrame] = [pd.DataFrame(record["points"]) for record in records if "points" in record]

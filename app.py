@@ -2,34 +2,30 @@
 import streamlit as st
 from src.log_parser import LogParser
 import src.ui_components as ui
-import plotly.express as px
-import requests
 
 # Streamlit app interface
 st.title("Log File Parser with Interactive Curve Diagrams")
-uploaded_file = st.file_uploader("Choose a log file", type="log")
+uploaded_files = st.file_uploader(
+    "Choose log file(s)", type="log", accept_multiple_files=True
+)
 
-if uploaded_file:
-    # Read file and parse
-    file_content = uploaded_file.read().decode("utf-8")
-    logparser = LogParser(file_content)
-    records_dfs = logparser.parse_log()
+if uploaded_files:
+    for uploaded_file in uploaded_files:
+        file_content = uploaded_file.read().decode("utf-8")
+        st.subheader(f"Results for {uploaded_file.name}")
+        logparser = LogParser(file_content)
+        records_dfs = logparser.parse_log()
 
-    if records_dfs:
-    
-        # Display each record's data and plot
-        for index, record_df in enumerate(records_dfs, start=1):
-            # Calculate velocity and update DataFrame
-            record_df = ui.calculate_velocity(record_df)
-
-            ui.display_data_table(record_df, f"Data for Record {index}:")
-
-            # Plot sampling interval analysis
-            ui.display_sampling_interval_analysis(record_df, index)
-
-            # Let user select X and Y axes
-            ui.select_and_plot_curve(record_df, index)
-    else:
-        st.write("No records found under '[Recorded curves]'.")
+        if records_dfs:
+            for index, record_df in enumerate(records_dfs, start=1):
+                record_df = ui.calculate_velocity(record_df)
+                ui.display_data_table(record_df, f"Data for Record {index}:")
+                ui.download_dataframe_csv(
+                    record_df, f"{uploaded_file.name}_record{index}.csv"
+                )
+                ui.display_sampling_interval_analysis(record_df, index)
+                ui.select_and_plot_curve(record_df, index)
+        else:
+            st.write("No records found under '[Recorded curves]'.")
 
 ui.display_footer(app_version="0.3",company_name="Festo SE & Co. KG")

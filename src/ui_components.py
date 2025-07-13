@@ -17,6 +17,31 @@ def display_data_table(dataframe: pd.DataFrame, title: str) -> None:
     st.dataframe(dataframe)
 
 
+def download_dataframe_csv(dataframe: pd.DataFrame, filename: str) -> None:
+    """Provide a download button to save the dataframe as a CSV file."""
+    csv = dataframe.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label=f"Download CSV ({filename})",
+        data=csv,
+        file_name=filename,
+        mime="text/csv",
+    )
+
+
+def download_figure_png(fig, filename: str) -> None:
+    """Provide a download button to save a Plotly figure as PNG."""
+    try:
+        png_bytes = fig.to_image(format="png")
+        st.download_button(
+            label=f"Download Plot ({filename})",
+            data=png_bytes,
+            file_name=filename,
+            mime="image/png",
+        )
+    except Exception as exc:
+        st.warning(f"Could not generate image: {exc}")
+
+
 def calculate_velocity(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
     Calculate velocity based on position and time, and add it as a new column to the DataFrame.
@@ -52,7 +77,7 @@ def evaluate_sampling_interval(dataframe: pd.DataFrame) -> Tuple[float, float]:
     std_interval = time_diff.std()
     return avg_interval, std_interval
 
-def plot_sampling_interval(dataframe: pd.DataFrame, nbins:int=20) -> None:
+def plot_sampling_interval(dataframe: pd.DataFrame, nbins:int=20):
     """
     Plot a histogram to visualize the distribution of the sampling intervals.
 
@@ -64,6 +89,7 @@ def plot_sampling_interval(dataframe: pd.DataFrame, nbins:int=20) -> None:
     fig = px.histogram(time_diff, nbins=nbins, title="Sampling Interval Distribution")
     fig.update_layout(xaxis_title="Sampling Interval (ms)", yaxis_title="Frequency", hovermode='x unified')
     st.plotly_chart(fig)
+    return fig
 
 def display_sampling_interval_analysis(dataframe: pd.DataFrame, record_index: int) -> None:
     """
@@ -78,7 +104,8 @@ def display_sampling_interval_analysis(dataframe: pd.DataFrame, record_index: in
     st.write(f"Average Sampling Interval for Record {record_index}: {avg_interval:.4f} ms")
     st.write(f"Standard Deviation of Sampling Interval for Record {record_index}: {std_interval:.4f} ms")
     nbins = st.slider(f"Select number of bins for sampling interval histogram (Record {record_index}):", min_value=10, max_value=500, value=50, step=5)
-    plot_sampling_interval(dataframe, nbins=nbins)
+    fig = plot_sampling_interval(dataframe, nbins=nbins)
+    download_figure_png(fig, f"sampling_interval_record_{record_index}.png")
 
 def select_and_plot_curve(dataframe: pd.DataFrame, record_index: int) -> None:
     """
@@ -89,7 +116,13 @@ def select_and_plot_curve(dataframe: pd.DataFrame, record_index: int) -> None:
         record_index (int): The index of the current record.
     """
     x_axis, y_axes = select_axis(dataframe, record_index)
-    plot_curve(dataframe, x_axis, y_axes, f"{x_axis} vs. {', '.join(y_axes)} Curve for Record {record_index}")
+    fig = plot_curve(
+        dataframe,
+        x_axis,
+        y_axes,
+        f"{x_axis} vs. {', '.join(y_axes)} Curve for Record {record_index}",
+    )
+    download_figure_png(fig, f"curve_record_{record_index}.png")
 
 def select_axis(dataframe: pd.DataFrame, record_index: int) -> tuple:
     """
@@ -107,7 +140,7 @@ def select_axis(dataframe: pd.DataFrame, record_index: int) -> tuple:
     y_axes = st.multiselect(f"Select Y axis for Record {record_index}:", options=dataframe.columns, default=[dataframe.columns[2]], key=f"y_axis_{record_index}")
     return x_axis, y_axes
 
-def plot_curve(dataframe: pd.DataFrame, x_axis: str, y_axes: List[str], title: str) -> None:
+def plot_curve(dataframe: pd.DataFrame, x_axis: str, y_axes: List[str], title: str):
     """
     Plot an interactive curve using Plotly based on selected X and multiple Y axes.
 
@@ -121,6 +154,7 @@ def plot_curve(dataframe: pd.DataFrame, x_axis: str, y_axes: List[str], title: s
     fig.update_traces(mode="lines+markers")
     fig.update_layout(xaxis_title=x_axis, yaxis_title=', '.join(y_axes), hovermode='x unified')
     st.plotly_chart(fig)
+    return fig
 
 
 def display_footer(app_version: str, company_name: str) -> None:

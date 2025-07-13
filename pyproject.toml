@@ -12,7 +12,7 @@ streamlit = "*"
 matplotlib = "*"
 plotly = "*"
 pandas = "*"
-requests = "*"
+kaleido = "*"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
