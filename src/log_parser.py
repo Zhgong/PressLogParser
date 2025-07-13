@@ -18,10 +18,10 @@ class LogParser:
         for line in self.file_content.splitlines():
             if "[Recorded curves]" in line:
                 record_section = True
-                continue
+
             elif "[Variables]" in line:  # End of recorded curves section
                 record_section = False
-                continue
+
 
             # Extract records within "[Recorded curves]"
             if record_section:
