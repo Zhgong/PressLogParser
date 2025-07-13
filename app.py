@@ -10,7 +10,7 @@ uploaded_files = st.file_uploader(
 )
 
 if uploaded_files:
-    for uploaded_file in uploaded_files:
+    for file_index, uploaded_file in enumerate(uploaded_files, start=1):
         file_content = uploaded_file.read().decode("utf-8")
         st.subheader(f"Results for {uploaded_file.name}")
         logparser = LogParser(file_content)
@@ -23,8 +23,8 @@ if uploaded_files:
                 ui.download_dataframe_csv(
                     record_df, f"{uploaded_file.name}_record{index}.csv"
                 )
-                ui.display_sampling_interval_analysis(record_df, index)
-                ui.select_and_plot_curve(record_df, index)
+                ui.display_sampling_interval_analysis(record_df, index, file_index=file_index)
+                ui.select_and_plot_curve(record_df, index, file_index=file_index)
         else:
             st.write("No records found under '[Recorded curves]'.")
 
