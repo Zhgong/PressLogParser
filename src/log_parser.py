@@ -78,13 +78,6 @@ class LogParser:
                 else:
                     logger.warning("Invalid line skipped: %s", line)
             else:
-                key_val = re.match(r"([^;:]+)[;:]\s*(.+)", line)
-                if key_val:
-                    key = key_val.group(1).strip().lower().replace(" ", "_")
-                    value = key_val.group(2).strip()
-                    metadata[key] = value
-                    continue
-
                 result_match = re.match(
                     r"(window|threshold|envelope).*?:\s*(.+)",
                     line,
