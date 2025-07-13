@@ -222,8 +222,8 @@ class LogFileUI:
         if not metadata:
             return
         st.header("Metadata")
-        meta_df = pd.DataFrame(list(metadata.items()), columns=["Key", "Value"])
-        st.table(meta_df)
+        for label, val in metadata.items():
+            st.write(f"**{label}**: {val}")
 
     def display_record(self, dataframe: pd.DataFrame, record_index: int) -> None:
         dataframe = calculate_velocity(dataframe)
