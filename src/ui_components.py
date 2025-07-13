@@ -17,7 +17,9 @@ def display_data_table(dataframe: pd.DataFrame, title: str) -> None:
     st.dataframe(dataframe)
 
 
-def download_dataframe_csv(dataframe: pd.DataFrame, filename: str) -> None:
+def download_dataframe_csv(
+    dataframe: pd.DataFrame, filename: str, key: str | None = None
+) -> None:
     """Provide a download button to save the dataframe as a CSV file."""
     csv = dataframe.to_csv(index=False).encode("utf-8")
     st.download_button(
@@ -25,10 +27,11 @@ def download_dataframe_csv(dataframe: pd.DataFrame, filename: str) -> None:
         data=csv,
         file_name=filename,
         mime="text/csv",
+        key=key,
     )
 
 
-def download_figure_png(fig, filename: str) -> None:
+def download_figure_png(fig, filename: str, key: str | None = None) -> None:
     """Provide a download button to save a Plotly figure as PNG."""
     try:
         png_bytes = fig.to_image(format="png")
@@ -37,6 +40,7 @@ def download_figure_png(fig, filename: str) -> None:
             data=png_bytes,
             file_name=filename,
             mime="image/png",
+            key=key,
         )
     except Exception as exc:
         st.warning(f"Could not generate image: {exc}")
@@ -202,3 +206,24 @@ def display_footer(app_version: str, company_name: str) -> None:
     </div>
     """
     st.markdown(footer, unsafe_allow_html=True)
+
+
+class LogFileUI:
+    """Encapsulate UI handling for an individual log file."""
+
+    def __init__(self, file_index: int, filename: str) -> None:
+        self.file_index = file_index
+        self.filename = filename
+
+    def display_record(self, dataframe: pd.DataFrame, record_index: int) -> None:
+        dataframe = calculate_velocity(dataframe)
+        display_data_table(dataframe, f"Data for Record {record_index}:")
+        download_dataframe_csv(
+            dataframe,
+            f"{self.filename}_record{record_index}.csv",
+            key=f"csv_{self.file_index}_{record_index}",
+        )
+        display_sampling_interval_analysis(
+            dataframe, record_index, file_index=self.file_index
+        )
+        select_and_plot_curve(dataframe, record_index, file_index=self.file_index)

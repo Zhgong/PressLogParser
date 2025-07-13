@@ -15,16 +15,11 @@ if uploaded_files:
         st.subheader(f"Results for {uploaded_file.name}")
         logparser = LogParser(file_content)
         records_dfs = logparser.parse_log()
+        file_ui = ui.LogFileUI(file_index=file_index, filename=uploaded_file.name)
 
         if records_dfs:
             for index, record_df in enumerate(records_dfs, start=1):
-                record_df = ui.calculate_velocity(record_df)
-                ui.display_data_table(record_df, f"Data for Record {index}:")
-                ui.download_dataframe_csv(
-                    record_df, f"{uploaded_file.name}_record{index}.csv"
-                )
-                ui.display_sampling_interval_analysis(record_df, index, file_index=file_index)
-                ui.select_and_plot_curve(record_df, index, file_index=file_index)
+                file_ui.display_record(record_df, index)
         else:
             st.write("No records found under '[Recorded curves]'.")
 

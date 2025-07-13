@@ -13,6 +13,7 @@ class DummyStreamlit(types.SimpleNamespace):
         self.slider_calls = []
         self.selectbox_calls = []
         self.multiselect_calls = []
+        self.download_button_calls = []
 
 
     def slider(self, *args, **kwargs):
@@ -29,7 +30,7 @@ class DummyStreamlit(types.SimpleNamespace):
         pass
 
     def download_button(self, *args, **kwargs):
-        pass
+        self.download_button_calls.append(kwargs.get("key"))
 
     def markdown(self, *args, **kwargs):
         pass
@@ -83,6 +84,18 @@ class TestUIComponents(unittest.TestCase):
 
         self.assertEqual(self.streamlit.selectbox_calls, ["x_axis_1_1", "x_axis_2_1"])
         self.assertEqual(self.streamlit.multiselect_calls, ["y_axis_1_1", "y_axis_2_1"])
+
+    def test_download_button_unique_keys(self):
+        df = pd.DataFrame({"A": [1]})
+        dummy_fig = types.SimpleNamespace(to_image=lambda format="png": b"img")
+
+        ui.download_dataframe_csv(df, "file.csv", key="csv_1_1")
+        ui.download_dataframe_csv(df, "file.csv", key="csv_2_1")
+        ui.download_figure_png(dummy_fig, "plot.png", key="fig_1_1")
+        ui.download_figure_png(dummy_fig, "plot.png", key="fig_2_1")
+
+        expected = ["csv_1_1", "csv_2_1", "fig_1_1", "fig_2_1"]
+        self.assertEqual(self.streamlit.download_button_calls, expected)
 
 
 if __name__ == "__main__":
