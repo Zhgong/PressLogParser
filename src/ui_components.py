@@ -122,7 +122,8 @@ def display_sampling_interval_analysis(
 
     )
     fig = plot_sampling_interval(dataframe, nbins=nbins)
-    download_figure_png(fig, f"sampling_interval_record_{record_index}.png")
+    key_suffix = f"{file_index}_{record_index}" if file_index is not None else str(record_index)
+    download_figure_png(fig, f"sampling_interval_record_{record_index}.png", key=f"sampling_{key_suffix}")
 
 def select_and_plot_curve(
     dataframe: pd.DataFrame, record_index: int, file_index: int | None = None
@@ -142,7 +143,8 @@ def select_and_plot_curve(
         y_axes,
         f"{x_axis} vs. {', '.join(y_axes)} Curve for Record {record_index}",
     )
-    download_figure_png(fig, f"curve_record_{record_index}.png")
+    key_suffix = f"{file_index}_{record_index}" if file_index is not None else str(record_index)
+    download_figure_png(fig, f"curve_record_{record_index}.png", key=f"curve_{key_suffix}")
 
 def select_axis(
     dataframe: pd.DataFrame, record_index: int, file_index: int | None = None
