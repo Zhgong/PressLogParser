@@ -91,38 +91,45 @@ def plot_sampling_interval(dataframe: pd.DataFrame, nbins:int=20):
     st.plotly_chart(fig)
     return fig
 
-def display_sampling_interval_analysis(dataframe: pd.DataFrame, record_index: int) -> None:
+def display_sampling_interval_analysis(
+    dataframe: pd.DataFrame, record_index: int, file_index: int | None = None
+) -> None:
     """
     Display sampling interval analysis including average, standard deviation, and a histogram.
 
     Args:
         dataframe (pd.DataFrame): The DataFrame containing the Time column.
         record_index (int): The index of the current record.
+        file_index (int | None): Optional index of the file for unique key generation.
     """
     st.header("Sampling Interval Analysis Section")
     avg_interval, std_interval = evaluate_sampling_interval(dataframe)
     st.write(f"Average Sampling Interval for Record {record_index}: {avg_interval:.4f} ms")
     st.write(f"Standard Deviation of Sampling Interval for Record {record_index}: {std_interval:.4f} ms")
+    key_suffix = f"{file_index}_{record_index}" if file_index is not None else str(record_index)
     nbins = st.slider(
         f"Select number of bins for sampling interval histogram (Record {record_index}):",
         min_value=10,
         max_value=500,
         value=50,
         step=5,
-        key=f"sampling_bins_{record_index}",
+        key=f"sampling_bins_{key_suffix}",
     )
     fig = plot_sampling_interval(dataframe, nbins=nbins)
     download_figure_png(fig, f"sampling_interval_record_{record_index}.png")
 
-def select_and_plot_curve(dataframe: pd.DataFrame, record_index: int) -> None:
+def select_and_plot_curve(
+    dataframe: pd.DataFrame, record_index: int, file_index: int | None = None
+) -> None:
     """
     Allow the user to select X and Y axes and plot the curve based on the selected columns.
 
     Args:
         dataframe (pd.DataFrame): The DataFrame for which axes are to be selected and plotted.
         record_index (int): The index of the current record.
+        file_index (int | None): Optional index of the file for unique key generation.
     """
-    x_axis, y_axes = select_axis(dataframe, record_index)
+    x_axis, y_axes = select_axis(dataframe, record_index, file_index)
     fig = plot_curve(
         dataframe,
         x_axis,
@@ -131,20 +138,34 @@ def select_and_plot_curve(dataframe: pd.DataFrame, record_index: int) -> None:
     )
     download_figure_png(fig, f"curve_record_{record_index}.png")
 
-def select_axis(dataframe: pd.DataFrame, record_index: int) -> tuple:
+def select_axis(
+    dataframe: pd.DataFrame, record_index: int, file_index: int | None = None
+) -> tuple:
     """
     Display select boxes to choose X and multiple Y axes for plotting.
 
     Args:
         dataframe (pd.DataFrame): The DataFrame for which axes are to be selected.
         record_index (int): The index of the current record for unique key identification.
+        file_index (int | None): Optional index of the file for unique key generation.
 
     Returns:
         tuple: Selected X axis and list of Y axes.
     """
     st.header("Curve Plotting Section")
-    x_axis = st.selectbox(f"Select X axis for Record {record_index}:", options=dataframe.columns, index=1, key=f"x_axis_{record_index}")
-    y_axes = st.multiselect(f"Select Y axis for Record {record_index}:", options=dataframe.columns, default=[dataframe.columns[2]], key=f"y_axis_{record_index}")
+    key_suffix = f"{file_index}_{record_index}" if file_index is not None else str(record_index)
+    x_axis = st.selectbox(
+        f"Select X axis for Record {record_index}:",
+        options=dataframe.columns,
+        index=1,
+        key=f"x_axis_{key_suffix}",
+    )
+    y_axes = st.multiselect(
+        f"Select Y axis for Record {record_index}:",
+        options=dataframe.columns,
+        default=[dataframe.columns[2]],
+        key=f"y_axis_{key_suffix}",
+    )
     return x_axis, y_axes
 
 def plot_curve(dataframe: pd.DataFrame, x_axis: str, y_axes: List[str], title: str):
