@@ -114,7 +114,6 @@ def display_sampling_interval_analysis(
         max_value=500,
         value=50,
         step=5,
-        fj7sng-codex/fix-streamlit-duplicate-slider-id-error
         key=f"sampling_bins_{key_suffix}",
 
     )
