@@ -15,7 +15,9 @@ class DummyStreamlit(types.SimpleNamespace):
         self.multiselect_calls = []
         self.download_button_calls = []
         self.tabs_calls = []
+        self.sidebar_selectbox_calls = []
         self.uploaded_files = []
+        self.sidebar = types.SimpleNamespace(selectbox=self.sidebar_selectbox)
 
 
     def slider(self, *args, **kwargs):
@@ -53,6 +55,10 @@ class DummyStreamlit(types.SimpleNamespace):
     def tabs(self, names):
         self.tabs_calls.append(names)
         return [self.DummyTab() for _ in names]
+
+    def sidebar_selectbox(self, label, options, *args, **kwargs):
+        self.sidebar_selectbox_calls.append(options)
+        return options[0] if options else None
 
     def markdown(self, *args, **kwargs):
         pass
@@ -159,8 +165,8 @@ class TestAppLayout(unittest.TestCase):
         parser_module.LogParser = self.original_logparser
         ui_module.LogFileUI = self.original_logfileui
 
-    def test_tabs_created_for_uploaded_files(self):
-        self.assertEqual(self.streamlit.tabs_calls, [["a.log", "b.log"]])
+    def test_sidebar_selectbox_called_for_uploaded_files(self):
+        self.assertEqual(self.streamlit.sidebar_selectbox_calls, [["a.log", "b.log"]])
 
 
 if __name__ == "__main__":
