@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 def display_data_table(dataframe: pd.DataFrame, title: str) -> None:
     """
@@ -216,6 +216,14 @@ class LogFileUI:
     def __init__(self, file_index: int, filename: str) -> None:
         self.file_index = file_index
         self.filename = filename
+
+    def display_metadata(self, metadata: Dict[str, str]) -> None:
+        """Display parsed metadata information."""
+        if not metadata:
+            return
+        st.header("Metadata")
+        meta_df = pd.DataFrame(list(metadata.items()), columns=["Key", "Value"])
+        st.table(meta_df)
 
     def display_record(self, dataframe: pd.DataFrame, record_index: int) -> None:
         dataframe = calculate_velocity(dataframe)
