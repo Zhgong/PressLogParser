@@ -80,5 +80,27 @@ class TestLogParser(unittest.TestCase):
         self.assertEqual(metadata.get("envelope_result"), "FAIL")
         self.assertEqual(len(dfs), 1)
 
+    def test_parse_header_metadata(self):
+        log_lines = [
+            "[Part no.];[Program name];[Part ID];[Timestamp];[Result];[Max. position];[Max. force];[NOK source]",
+            "2;AdcTest;7;2024-12-12-09:38:39;TRUE;36.638;85.05249;0",
+            "[MAC Address];[Serial number]",
+            "00:0E:F0:84:93:3B;",
+        ]
+        log_content = "\n".join(log_lines)
+        parser = LogParser(log_content)
+        metadata, dfs = parser.parse_log()
+        self.assertEqual(metadata.get("part_no"), "2")
+        self.assertEqual(metadata.get("program_name"), "AdcTest")
+        self.assertEqual(metadata.get("part_id"), "7")
+        self.assertEqual(metadata.get("timestamp"), "2024-12-12-09:38:39")
+        self.assertEqual(metadata.get("result"), "TRUE")
+        self.assertEqual(metadata.get("max_position"), "36.638")
+        self.assertEqual(metadata.get("max_force"), "85.05249")
+        self.assertEqual(metadata.get("nok_source"), "0")
+        self.assertEqual(metadata.get("mac_address"), "00:0E:F0:84:93:3B")
+        self.assertEqual(metadata.get("serial_number", ""), "")
+        self.assertEqual(len(dfs), 0)
+
 if __name__ == "__main__":
     unittest.main()

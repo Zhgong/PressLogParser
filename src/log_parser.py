@@ -3,6 +3,33 @@ import logging
 import pandas as pd
 from typing import List, Dict, Any, Tuple
 
+
+def _parse_header_metadata(lines: List[str]) -> Dict[str, str]:
+    """Parse metadata from the first four lines if they are in header format."""
+    if len(lines) < 2:
+        return {}
+
+    # Detect the pattern [Field];[Field];... in the first line
+    if not re.match(r"\[[^\]]+\];", lines[0]):
+        return {}
+
+    metadata: Dict[str, str] = {}
+
+    def parse_pair_line(header_line: str, value_line: str) -> None:
+        headers = [h.strip()[1:-1] for h in header_line.split(";") if h]
+        values = [v.strip() for v in value_line.split(";")]
+        for key, val in zip(headers, values):
+            if key:
+                key_norm = re.sub(r"[^a-z0-9_]+", "", key.lower().replace(" ", "_"))
+                if val:
+                    metadata[key_norm] = val
+
+    parse_pair_line(lines[0], lines[1])
+    if len(lines) >= 4:
+        parse_pair_line(lines[2], lines[3])
+
+    return metadata
+
 logger = logging.getLogger(__name__)
 
 class LogParser:
@@ -15,7 +42,17 @@ class LogParser:
         record_section: bool = False
         current_record: Dict[str, Any] = {}
 
-        for line in self.file_content.splitlines():
+        lines = self.file_content.splitlines()
+
+        # Attempt to parse metadata contained in the first four lines
+        header_meta = _parse_header_metadata(lines[:4])
+        if header_meta:
+            metadata.update(header_meta)
+            start_index = 4
+        else:
+            start_index = 0
+
+        for line in lines[start_index:]:
             if "[Recorded curves]" in line:
                 record_section = True
 
