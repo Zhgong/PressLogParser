@@ -40,6 +40,7 @@ pyproject.toml     # Poetry-Konfiguration
 ## Funktionsübersicht
 
 - Parst die Aufzeichnungen im Abschnitt `[Recorded curves]`
+- Liest Metadaten wie Artikelnummer, Programmname, Zeitstempel und Ergebnisse aus
 - Berechnet und zeigt Abtastintervalle sowie Geschwindigkeitskurven an
 - Interaktive Datenanzeige in Streamlit mit Plotly
 

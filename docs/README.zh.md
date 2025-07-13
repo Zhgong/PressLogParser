@@ -39,5 +39,6 @@ pyproject.toml     # Poetry 配置
 ## 功能简介
 
 - 解析日志中 `[Recorded curves]` 部分的记录
+- 读取零件号、程序名、时间戳及结果等元数据
 - 计算并展示采样间隔及速度曲线
 - 通过 Plotly 在 Streamlit 中交互式显示数据

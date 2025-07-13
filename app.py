@@ -10,6 +10,7 @@ uploaded_files = st.file_uploader(
 )
 
 if uploaded_files:
+
     tab_labels = [file.name for file in uploaded_files]
     tabs = st.tabs(tab_labels)
 
@@ -26,5 +27,6 @@ if uploaded_files:
                     file_ui.display_record(record_df, index)
             else:
                 st.write("No records found under '[Recorded curves]'.")
+
 
 ui.display_footer(app_version="0.3",company_name="Festo SE & Co. KG")

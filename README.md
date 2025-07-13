@@ -43,6 +43,7 @@ pyproject.toml     # Poetry configuration
 ## Features
 
 - Parse records inside the `[Recorded curves]` section
+- Parse metadata such as part numbers, program names, timestamps and results
 - Compute and visualize sampling intervals and velocity curves
 - Interactive data display in Streamlit using Plotly
 

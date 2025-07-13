@@ -1,7 +1,7 @@
 import re
 import logging
 import pandas as pd
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,8 @@ class LogParser:
     def __init__(self, file_content: str) -> None:
         self.file_content: str = file_content
 
-    def parse_log(self) -> List[pd.DataFrame]:
+    def parse_log(self) -> Tuple[Dict[str, str], List[pd.DataFrame]]:
+        metadata: Dict[str, str] = {}
         records: List[Dict[str, Any]] = []
         record_section: bool = False
         current_record: Dict[str, Any] = {}
@@ -17,8 +18,10 @@ class LogParser:
         for line in self.file_content.splitlines():
             if "[Recorded curves]" in line:
                 record_section = True
+                continue
             elif "[Variables]" in line:  # End of recorded curves section
                 record_section = False
+                continue
 
             # Extract records within "[Recorded curves]"
             if record_section:
@@ -37,6 +40,22 @@ class LogParser:
                     current_record["points"].append({"Point": point, "Position": position, "Force": force, "Time (ms)": time_ms})
                 else:
                     logger.warning("Invalid line skipped: %s", line)
+            else:
+                key_val = re.match(r"([^;:]+)[;:]\s*(.+)", line)
+                if key_val:
+                    key = key_val.group(1).strip().lower().replace(" ", "_")
+                    value = key_val.group(2).strip()
+                    metadata[key] = value
+                    continue
+
+                result_match = re.match(
+                    r"(window|threshold|envelope).*?:\s*(.+)",
+                    line,
+                    re.IGNORECASE,
+                )
+                if result_match:
+                    result_key = f"{result_match.group(1).lower()}_result"
+                    metadata[result_key] = result_match.group(2).strip()
 
         # Convert records into a list of dataframes
         record_dfs: List[pd.DataFrame] = [pd.DataFrame(record["points"]) for record in records if "points" in record]
@@ -45,7 +64,7 @@ class LogParser:
        
         for df in record_dfs:
             df['Time (ms)'] = df['Time (ms)'] - df['Time (ms)'][0]
-        return record_dfs
+        return metadata, record_dfs
 
 def parse_time(time_str: str) -> int:
     match = re.match(r'T#(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?(\d+)ms', time_str)

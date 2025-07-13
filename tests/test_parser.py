@@ -39,6 +39,8 @@ class TestLogParser(unittest.TestCase):
     def test_parse_log_basic(self):
         log_content = "\n".join(
             [
+                "Program name;TestProg",
+                "Part number;123",
                 "[Recorded curves]",
                 "[Record 1]",
                 "0;0.0;0.1;T#0ms",
@@ -47,13 +49,36 @@ class TestLogParser(unittest.TestCase):
                 "0;2.0;0.3;T#0ms",
                 "1;3.0;0.4;T#100ms",
                 "[Variables]",
+                "Window result:OK",
+                "Threshold result:OK",
             ]
         )
         parser = LogParser(log_content)
-        dfs = parser.parse_log()
+        metadata, dfs = parser.parse_log()
         self.assertEqual(len(dfs), 2)
         self.assertListEqual(dfs[0]["Point"].tolist(), [0, 1])
         self.assertEqual(dfs[0]["Time (ms)"].iloc[-1], 100)
+
+    def test_parse_metadata(self):
+        log_content = "\n".join(
+            [
+                "Program name;MetaProg",
+                "Part number;999",
+                "[Recorded curves]",
+                "[Record 1]",
+                "0;0.0;0.1;T#0ms",
+                "[Variables]",
+                "Window result:PASS",
+                "Envelope result:FAIL",
+            ]
+        )
+        parser = LogParser(log_content)
+        metadata, dfs = parser.parse_log()
+        self.assertEqual(metadata.get("program_name"), "MetaProg")
+        self.assertEqual(metadata.get("part_number"), "999")
+        self.assertEqual(metadata.get("window_result"), "PASS")
+        self.assertEqual(metadata.get("envelope_result"), "FAIL")
+        self.assertEqual(len(dfs), 1)
 
 if __name__ == "__main__":
     unittest.main()
