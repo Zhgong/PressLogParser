@@ -107,13 +107,16 @@ def display_sampling_interval_analysis(
     st.write(f"Average Sampling Interval for Record {record_index}: {avg_interval:.4f} ms")
     st.write(f"Standard Deviation of Sampling Interval for Record {record_index}: {std_interval:.4f} ms")
     key_suffix = f"{file_index}_{record_index}" if file_index is not None else str(record_index)
+
     nbins = st.slider(
         f"Select number of bins for sampling interval histogram (Record {record_index}):",
         min_value=10,
         max_value=500,
         value=50,
         step=5,
+        fj7sng-codex/fix-streamlit-duplicate-slider-id-error
         key=f"sampling_bins_{key_suffix}",
+
     )
     fig = plot_sampling_interval(dataframe, nbins=nbins)
     download_figure_png(fig, f"sampling_interval_record_{record_index}.png")

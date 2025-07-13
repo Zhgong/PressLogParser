@@ -14,6 +14,7 @@ class DummyStreamlit(types.SimpleNamespace):
         self.selectbox_calls = []
         self.multiselect_calls = []
 
+
     def slider(self, *args, **kwargs):
         self.slider_calls.append(kwargs.get("key"))
         return kwargs.get("value", 50)
@@ -42,6 +43,7 @@ class DummyStreamlit(types.SimpleNamespace):
 
     def multiselect(self, *args, **kwargs):
         self.multiselect_calls.append(kwargs.get("key"))
+
         return []
 
 dummy_streamlit = DummyStreamlit()
@@ -55,6 +57,7 @@ class TestUIComponents(unittest.TestCase):
         self.streamlit = DummyStreamlit()
         sys.modules['streamlit'] = self.streamlit
         globals()['ui'] = importlib.reload(importlib.import_module("src.ui_components"))
+
 
     def test_sampling_slider_unique_keys(self):
         df = pd.DataFrame({
@@ -80,6 +83,7 @@ class TestUIComponents(unittest.TestCase):
 
         self.assertEqual(self.streamlit.selectbox_calls, ["x_axis_1_1", "x_axis_2_1"])
         self.assertEqual(self.streamlit.multiselect_calls, ["y_axis_1_1", "y_axis_2_1"])
+
 
 if __name__ == "__main__":
     unittest.main()
