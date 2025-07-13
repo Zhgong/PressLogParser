@@ -19,6 +19,8 @@ poetry install
 poetry run streamlit run app.py
 ```
 
+运行后，应用会以列表形式显示文件头部的元数据，而非表格。
+
 ## 测试
 
 执行单元测试：
@@ -39,6 +41,7 @@ pyproject.toml     # Poetry 配置
 ## 功能简介
 
 - 解析日志中 `[Recorded curves]` 部分的记录
-- 读取零件号、程序名、时间戳及结果等元数据
+- 仅从前四行头部提取元数据，字段包括 Part no.、Program name、Part ID、Timestamp、
+  Result、Max. position、Max. force、NOK source、MAC Address、Serial number
 - 计算并展示采样间隔及速度曲线
 - 通过 Plotly 在 Streamlit 中交互式显示数据
