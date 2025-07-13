@@ -20,6 +20,8 @@ Starte die Streamlit-App:
 poetry run streamlit run app.py
 ```
 
+Die Metadaten werden dabei als einfache Liste (keine Tabelle) angezeigt.
+
 ## Tests
 
 F\xFChre Unit-Tests aus:
@@ -40,7 +42,9 @@ pyproject.toml     # Poetry-Konfiguration
 ## Funktionsübersicht
 
 - Parst die Aufzeichnungen im Abschnitt `[Recorded curves]`
-- Liest Metadaten wie Artikelnummer, Programmname, Zeitstempel und Ergebnisse aus
+- Liest Metadaten ausschlie\xDFlich aus den ersten vier Kopfzeilen. Unterst\xFCtzte Felder sind
+  Part no., Program name, Part ID, Timestamp, Result, Max. position, Max.
+  force, NOK source, MAC Address und Serial number
 - Berechnet und zeigt Abtastintervalle sowie Geschwindigkeitskurven an
 - Interaktive Datenanzeige in Streamlit mit Plotly
 

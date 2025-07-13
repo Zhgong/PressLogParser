@@ -21,6 +21,9 @@ Launch the Streamlit app:
 poetry run streamlit run app.py
 ```
 
+The metadata at the top of each log file is displayed as a simple list rather
+than a table.
+
 
 ## Testing
 
@@ -43,7 +46,9 @@ pyproject.toml     # Poetry configuration
 ## Features
 
 - Parse records inside the `[Recorded curves]` section
-- Parse metadata such as part numbers, program names, timestamps and results
+- Parse metadata only from the first four header lines. Supported fields are
+  Part no., Program name, Part ID, Timestamp, Result, Max. position, Max.
+  force, NOK source, MAC Address and Serial number
 - Compute and visualize sampling intervals and velocity curves
 - Interactive data display in Streamlit using Plotly
 
