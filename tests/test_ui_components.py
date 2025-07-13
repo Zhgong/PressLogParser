@@ -14,11 +14,22 @@ class DummyStreamlit(types.SimpleNamespace):
         self.selectbox_calls = []
         self.multiselect_calls = []
         self.download_button_calls = []
+        self.tabs_calls = []
+        self.uploaded_files = []
 
 
     def slider(self, *args, **kwargs):
         self.slider_calls.append(kwargs.get("key"))
         return kwargs.get("value", 50)
+
+    def title(self, *args, **kwargs):
+        pass
+
+    def subheader(self, *args, **kwargs):
+        pass
+
+    def file_uploader(self, *args, **kwargs):
+        return self.uploaded_files
 
     def header(self, *args, **kwargs):
         pass
@@ -31,6 +42,17 @@ class DummyStreamlit(types.SimpleNamespace):
 
     def download_button(self, *args, **kwargs):
         self.download_button_calls.append(kwargs.get("key"))
+
+    class DummyTab:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            pass
+
+    def tabs(self, names):
+        self.tabs_calls.append(names)
+        return [self.DummyTab() for _ in names]
 
     def markdown(self, *args, **kwargs):
         pass
@@ -96,6 +118,49 @@ class TestUIComponents(unittest.TestCase):
 
         expected = ["csv_1_1", "csv_2_1", "fig_1_1", "fig_2_1"]
         self.assertEqual(self.streamlit.download_button_calls, expected)
+
+
+class TestAppLayout(unittest.TestCase):
+    def setUp(self):
+        self.streamlit = DummyStreamlit()
+        sys.modules['streamlit'] = self.streamlit
+
+        class DummyParser:
+            def __init__(self, content):
+                pass
+
+            def parse_log(self):
+                return []
+
+        parser_module = importlib.import_module("src.log_parser")
+        self.original_logparser = parser_module.LogParser
+        parser_module.LogParser = DummyParser
+
+        class DummyFile(types.SimpleNamespace):
+            def read(self):
+                return b""
+
+        self.streamlit.uploaded_files = [DummyFile(name="a.log"), DummyFile(name="b.log")]
+
+        ui_module = importlib.import_module("src.ui_components")
+        self.original_logfileui = ui_module.LogFileUI
+
+        class DummyLogFileUI:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def display_record(self, *args, **kwargs):
+                pass
+
+        ui_module.LogFileUI = DummyLogFileUI
+
+        importlib.import_module("app")
+
+        parser_module.LogParser = self.original_logparser
+        ui_module.LogFileUI = self.original_logfileui
+
+    def test_tabs_created_for_uploaded_files(self):
+        self.assertEqual(self.streamlit.tabs_calls, [["a.log", "b.log"]])
 
 
 if __name__ == "__main__":
