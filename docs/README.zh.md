@@ -45,3 +45,4 @@ pyproject.toml     # Poetry 配置
   Result、Max. position、Max. force、NOK source、MAC Address、Serial number
 - 计算并展示采样间隔及速度曲线
 - 通过 Plotly 在 Streamlit 中交互式显示数据
+- 可在侧边栏选择上传的日志文件，便于切换查看

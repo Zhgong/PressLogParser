@@ -51,6 +51,7 @@ pyproject.toml     # Poetry configuration
   force, NOK source, MAC Address and Serial number
 - Compute and visualize sampling intervals and velocity curves
 - Interactive data display in Streamlit using Plotly
+- Select uploaded log files from a sidebar for quick access
 
 ---
 

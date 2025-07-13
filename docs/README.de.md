@@ -47,4 +47,5 @@ pyproject.toml     # Poetry-Konfiguration
   force, NOK source, MAC Address und Serial number
 - Berechnet und zeigt Abtastintervalle sowie Geschwindigkeitskurven an
 - Interaktive Datenanzeige in Streamlit mit Plotly
+- Hochgeladene Logdateien k\xF6nnen \xFCber die Seitenleiste ausgew\xE4hlt werden
 
