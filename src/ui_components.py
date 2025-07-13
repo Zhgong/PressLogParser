@@ -54,12 +54,12 @@ def calculate_velocity(dataframe: pd.DataFrame) -> pd.DataFrame:
     """
     dataframe = dataframe.copy()
     dataframe['Velocity'] = dataframe['Position'].diff() / dataframe['Time (ms)'].diff() * 1000  # Convert to velocity in appropriate units
-    dataframe['Velocity'] = dataframe['Velocity'].fillna(method='ffill')  # Fill NaN values with 0 for the first row
+    dataframe['Velocity'] = dataframe['Velocity'].ffill()  # Fill NaN values with the previous row
     
     # Add the moving average of the velocity
     dataframe['Velocity_MA(5)'] = dataframe['Velocity'].rolling(window=5).mean()
     # Fill NaN values in 'Velocity_MA' with the previous row's value
-    dataframe['Velocity_MA(5)'] = dataframe['Velocity_MA(5)'].fillna(method='ffill')
+    dataframe['Velocity_MA(5)'] = dataframe['Velocity_MA(5)'].ffill()
     return dataframe
 
 def evaluate_sampling_interval(dataframe: pd.DataFrame) -> Tuple[float, float]:
@@ -103,7 +103,14 @@ def display_sampling_interval_analysis(dataframe: pd.DataFrame, record_index: in
     avg_interval, std_interval = evaluate_sampling_interval(dataframe)
     st.write(f"Average Sampling Interval for Record {record_index}: {avg_interval:.4f} ms")
     st.write(f"Standard Deviation of Sampling Interval for Record {record_index}: {std_interval:.4f} ms")
-    nbins = st.slider(f"Select number of bins for sampling interval histogram (Record {record_index}):", min_value=10, max_value=500, value=50, step=5)
+    nbins = st.slider(
+        f"Select number of bins for sampling interval histogram (Record {record_index}):",
+        min_value=10,
+        max_value=500,
+        value=50,
+        step=5,
+        key=f"sampling_bins_{record_index}",
+    )
     fig = plot_sampling_interval(dataframe, nbins=nbins)
     download_figure_png(fig, f"sampling_interval_record_{record_index}.png")
 
